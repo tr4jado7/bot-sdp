@@ -31,8 +31,8 @@ class BotEvents {
         event.jda.guilds.forEach { guild ->
             guild.loadMembers().onSuccess { members ->
                 members.forEach { member ->
-                    if (member.roles.isEmpty() && !member.user.isBot) {
-                        GuildEvents().addDefaultRoles(member)
+                    if (member.roles.isEmpty()) {
+                        MemberEvents().addDefaultRoles(member)
                     }
                 }
             }
@@ -211,6 +211,14 @@ class BotEvents {
             newChannel.sendMessageEmbeds(embed).setActionRow(
                 Button.danger("ticket:close", "Fechar Ticket")
             ).queue()
+        } else if (parts[0] == "say") {
+            val message = event.getValue("message")?.asString ?: return event.reply("Mensagem não fornecida.").setEphemeral(true).queue()
+            val channel = event.channel.asTextChannel()
+
+            channel.sendMessage(message).queue()
+            event.reply("Mensagem enviada com sucesso!").setEphemeral(true).queue()
+        } else {
+            event.reply("Modal não reconhecido.").setEphemeral(true).queue()
         }
     }
 

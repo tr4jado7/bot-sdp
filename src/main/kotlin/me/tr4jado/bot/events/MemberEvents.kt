@@ -4,12 +4,17 @@ import me.tr4jado.bot.services.ConfigReader.loadConfig
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 
-class GuildEvents {
+class MemberEvents {
+    val welcomeConfig = loadConfig("config/welcome.yml")
+
     fun handleGuildMemberJoin(event: GuildMemberJoinEvent) {
         addDefaultRoles(event.member)
+        sendWelcomeMessage(event.member)
     }
 
     fun addDefaultRoles(member: Member) {
+        if (member.user.isBot) return
+
         val guild = member.guild
         val config = loadConfig("config/geral.yml")
 
@@ -38,5 +43,13 @@ class GuildEvents {
         } catch (e: Exception) {
             println("Erro ao processar cargos padrão: ${e.message}")
         }
+    }
+
+    private fun sendWelcomeMessage(member: Member) {
+        val channelId = welcomeConfig["channel"]?.toString() ?: return
+        val channel = member.guild.getTextChannelById(channelId) ?: return
+        val message = welcomeConfig["message"]?.toString() ?: return
+
+        channel.sendMessage(message.replace("{user}", member.user.asMention)).queue()
     }
 }

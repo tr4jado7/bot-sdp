@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class EventListener : ListenerAdapter() {
-    private val guildEvents = GuildEvents()
+    private val guildEvents = MemberEvents()
     private val botEvents = BotEvents()
 
     override fun onReady(event: ReadyEvent) {
